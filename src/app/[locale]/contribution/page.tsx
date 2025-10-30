@@ -1,7 +1,7 @@
 'use client';
 
 import { useUser } from '@clerk/nextjs';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from '@/lib/i18n-context';
@@ -25,14 +25,7 @@ export default function CommunityContributePage() {
   
   const [contributions, setContributions] = useState<Contribution[]>([]);
 
-  // Load user's contribution history
-  useEffect(() => {
-    if (isSignedIn) {
-      fetchContributions();
-    }
-  }, [isSignedIn]);
-
-  const fetchContributions = async () => {
+  const fetchContributions = useCallback(async () => {
     try {
       const response = await fetch('/api/community/my-submissions');
       if (response.ok) {
@@ -45,7 +38,15 @@ export default function CommunityContributePage() {
     } catch (error) {
       console.error('Failed to fetch contributions:', error);
     }
-  };
+  }, []);
+
+  // Load user's contribution history
+  useEffect(() => {
+    if (isSignedIn) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Fetching data on mount is a valid use case
+      fetchContributions();
+    }
+  }, [isSignedIn, fetchContributions]);
 
   if (!isLoaded) {
     return (

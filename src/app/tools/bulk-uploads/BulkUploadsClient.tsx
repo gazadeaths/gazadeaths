@@ -15,7 +15,6 @@ interface BulkUpload {
   uploadedAt: string;
   fileUrl: string;
   fileSize: number;
-  canRollback: boolean;
   stats: {
     total: number;
     inserts: number;
@@ -64,7 +63,6 @@ export default function BulkUploadsClient() {
   const [blobMetadata, setBlobMetadata] = useState<{ size: number; sha256: string; contentType: string; previewLines?: string | null } | null>(null);
   const [simulating, setSimulating] = useState(false);
   const [applying, setApplying] = useState(false);
-  const [rollingBack, setRollingBack] = useState<string | null>(null);
   const [simulationExpiresAt, setSimulationExpiresAt] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -418,45 +416,6 @@ export default function BulkUploadsClient() {
     }
   };
 
-  const handleRollback = async (uploadId: string, filename: string) => {
-    if (!confirm(`Are you sure you want to rollback the upload "${filename}"?\n\nThis will permanently delete all versions created by this upload and remove it from the history.`)) {
-      return;
-    }
-    
-    setRollingBack(uploadId);
-    const rollbackToast = toast.loading(`Rolling back "${filename}"...`, {
-      duration: Infinity,
-    });
-    
-    try {
-      const response = await fetch(`/api/admin/bulk-upload/${uploadId}/rollback`, { method: 'POST' });
-      const text = await response.text();
-      const data = text ? JSON.parse(text) : {};
-      if (data.success) {
-        toast.success(`Successfully rolled back "${filename}"`, {
-          id: rollbackToast,
-          description: `Removed ${data.stats.inserts} inserts, ${data.stats.updates} updates, ${data.stats.deletes} deletions`,
-          duration: Infinity,
-        });
-        // Scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        fetchUploads().catch(err => console.error('Failed to refresh uploads:', err));
-      } else {
-        toast.error(data.error || 'Failed to rollback upload', { 
-          id: rollbackToast,
-          duration: Infinity,
-        });
-      }
-    } catch (err) {
-      toast.error('An error occurred while rolling back the upload', { 
-        id: rollbackToast,
-        duration: Infinity,
-      });
-      console.error('Rollback error:', err);
-    } finally {
-      setRollingBack(null);
-    }
-  };
 
   const formatDate = (dateString: string) => new Date(dateString).toLocaleString();
   const formatDateOfBirth = (date: Date | string) => new Date(date).toLocaleDateString();
@@ -653,7 +612,6 @@ export default function BulkUploadsClient() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Inserts</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Updates</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Deletes</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-background divide-y divide-border">
@@ -694,13 +652,6 @@ export default function BulkUploadsClient() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-accent-foreground">{upload.stats.inserts}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-foreground">{upload.stats.updates}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-destructive">{upload.stats.deletes}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {upload.canRollback ? (
-                          <button onClick={() => handleRollback(upload.id, upload.filename)} disabled={rollingBack === upload.id} className="bg-destructive text-destructive-foreground px-3 py-1 rounded-md hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium">{rollingBack === upload.id ? 'Rolling back...' : 'Rollback'}</button>
-                        ) : (
-                          <span className="inline-block px-3 py-1 rounded-md bg-muted text-muted-foreground text-xs font-medium cursor-not-allowed" title="Cannot rollback: subsequent uploads have modified these records. Rollback recent uploads first (LIFO).">Rollback</span>
-                        )}
-                      </td>
                     </tr>
                   ))}
                 </tbody>

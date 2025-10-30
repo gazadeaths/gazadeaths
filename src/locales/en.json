@@ -2,26 +2,28 @@
   "nav": {
     "about": "About",
     "database": "Witnesses",
+    "sources": "Sources",
     "contributions": "Contributions",
     "adminTools": "Admin Tools",
     "signIn": "Sign In",
-    "signOut": "Sign Out"
+    "signOut": "Sign Out",
+    "signedInAs": "Signed in as"
   },
   "home": {
     "title": "We will not forget them",
-    "subtitle": "Documenting and humanising the",
-    "subtitleCount": "who have died in the",
+    "subtitle": "Documenting and humanising the Gaza genocide.",
+    "subtitleCount": "deaths officially confirmed by the",
     "subtitleLocation": "Gaza",
-    "subtitleEvent": "genocide",
+    "subtitleEvent": "Ministry of Health",
     "searchPlaceholder": "Search by name or ID number...",
     "contributeText": "Contribute missing information and help remember their lives"
   },
   "about": {
     "title": "About",
-    "mission": "Gaza Death Toll aims to memorialise those dead and missing in Gaza since Oct. 7. It uses the official MoH reports as a foundation and enables the wider Palestinian community to add information/corrections.",
-    "purpose": "The underlying purpose is to establish a canonical document of the human costs in Gaza, that can serve as the foundation for international justice, historical accountability, and collective memory. Similar resources and documents exist for other historical genocides.",
-    "current": "Today the Gaza Ministry of Health PDF updates confirmed deaths every 2-3 months through Telegram as PDF files (which contain only name, gender, date of birth). These are made available without much alteration by IraqBodyCount and Tech4Palestine.",
-    "belief": "We believe more can be done. Remembering is both an ethical and political act.",
+    "mission": "Gaza Witnesses has as its mission to memorialise those dead and missing in Gaza since Oct. 7, 2023. The platform combines many data sources, notably the official MoH reports and enables community contributions.",
+    "purpose": "The underlying purpose behind the platform, and mission, is to establish a canonical historical document of the human costs in Gaza. This document, and archive, will serve as a resource for international justice, historical accountability, political activism, artistic expression, and collective memory.",
+    "current": "",
+    "belief": "We believe that remembering is both an ethical and political act.",
     "teamTitle": "Advisory Team",
     "teamSubtitle": "A diverse team committed to preserving the memory of every life lost",
     "faqTitle": "Frequently Asked Questions",
@@ -134,6 +136,7 @@
     "back": "Back",
     "contribute": "Contribute information",
     "deleted": "Deleted",
+    "exampleImage": "Example Image",
     "fields": {
       "externalId": "External ID",
       "gender": "Gender",
@@ -259,6 +262,23 @@
   },
   "dates": {
     "notAvailable": "—"
+  },
+  "sources": {
+    "title": "Data Sources",
+    "description": "https://github.com/Gaza-Shuhada/gazashuhada/tree/main/data_sources",
+    "noSources": "No data sources available yet.",
+    "table": {
+      "dateReleased": "Date Released",
+      "filename": "Filename",
+      "comment": "Description",
+      "totalChanges": "Total Changes",
+      "inserts": "New Records",
+      "updates": "Updates",
+      "deletes": "Deletions",
+      "download": "Download",
+      "downloadLink": "Download CSV"
+    },
+    "footer": "All data is sourced from official Gaza Ministry of Health releases. Complete archive available on GitHub."
   }
 }
 

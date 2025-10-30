@@ -85,6 +85,27 @@
   }
 }
 
+/* Clerk Modal Styling - Fix transparent backdrop */
+@layer components {
+  /* Ensure Clerk modal has a solid backdrop */
+  .cl-modalBackdrop {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(8px);
+  }
+  
+  /* Ensure modal content has solid background */
+  .cl-modalContent,
+  .cl-card {
+    background-color: oklch(0.205 0 0) !important;
+    border: 1px solid oklch(1 0 0 / 10%);
+  }
+  
+  /* Fix for internal Clerk components */
+  .cl-internal-b3fm6y {
+    background-color: oklch(0.205 0 0) !important;
+  }
+}
+
 /* RTL Support */
 @layer utilities {
   /* Flip margins for RTL */

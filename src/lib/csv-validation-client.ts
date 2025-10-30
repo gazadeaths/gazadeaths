@@ -8,9 +8,6 @@
 
 import { parse } from 'csv-parse/sync';
 
-// Client-safe Gender type (mirrors Prisma enum)
-type Gender = 'MALE' | 'FEMALE' | 'OTHER';
-
 export interface ValidationResult {
   valid: boolean;
   error?: string;

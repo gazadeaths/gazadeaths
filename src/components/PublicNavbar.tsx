@@ -5,10 +5,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { SignInButton, SignOutButton, useAuth, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Menu, Globe } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Menu, Globe, User, LogOut, Settings, FileText } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from '@/lib/i18n-context';
 import { removeLocaleFromPathname, addLocaleToPathname, type Locale } from '@/lib/i18n';
+import Image from 'next/image';
 
 export function PublicNavbar() {
   const { isSignedIn } = useAuth();
@@ -81,31 +83,46 @@ export function PublicNavbar() {
                   >
                     {t('nav.database')}
                   </Link>
+                  <Link
+                    href={`/${locale}/sources`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-3 py-2 text-base font-medium transition-colors ${
+                      pathWithoutLocale === '/sources'
+                        ? 'text-foreground font-semibold'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {t('nav.sources')}
+                  </Link>
                   
-                  {/* Contributions - Only when signed in */}
+                  {/* User Menu - Only when signed in (Mobile) */}
                   {isSignedIn && (
-                    <Link
-                      href={`/${locale}/contribution`}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        pathWithoutLocale.startsWith('/contribution')
-                          ? 'text-foreground font-semibold'
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      {t('nav.contributions')}
-                    </Link>
-                  )}
-                  
-                  {/* Staff Tools Link - Only for staff */}
-                  {isStaff && (
-                    <Link
-                      href="/tools"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-primary hover:text-primary/80 px-3 py-2 rounded-md text-sm font-medium transition-colors border-t pt-4 mt-4"
-                    >
-                      {t('nav.adminTools')} →
-                    </Link>
+                    <>
+                      <div className="border-t pt-4 mt-4">
+                        <p className="px-3 py-2 text-xs text-muted-foreground uppercase">{t('nav.signedInAs') || 'Signed in as'}</p>
+                        <p className="px-3 pb-2 text-sm font-medium">{user?.emailAddresses[0]?.emailAddress}</p>
+                      </div>
+                      
+                      <Link
+                        href={`/${locale}/contribution`}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                      >
+                        <FileText className="h-4 w-4" />
+                        {t('nav.contributions')}
+                      </Link>
+                      
+                      {isStaff && (
+                        <Link
+                          href="/tools"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                        >
+                          <Settings className="h-4 w-4" />
+                          {t('nav.adminTools')}
+                        </Link>
+                      )}
+                    </>
                   )}
 
                   {/* Language Toggle - Mobile */}
@@ -164,20 +181,16 @@ export function PublicNavbar() {
               >
                 {t('nav.database')}
               </Link>
-              
-              {/* Contributions - Only when signed in */}
-              {isSignedIn && (
-                <Link
-                  href={`/${locale}/contribution`}
-                  className={`px-3 py-2 text-base font-medium transition-colors border-b-2 ${
-                    pathWithoutLocale.startsWith('/contribution')
-                      ? 'text-foreground font-semibold border-accent-foreground'
-                      : 'text-muted-foreground hover:text-foreground border-transparent hover:border-accent-foreground/50'
-                  }`}
-                >
-                  {t('nav.contributions')}
-                </Link>
-              )}
+              <Link
+                href={`/${locale}/sources`}
+                className={`px-3 py-2 text-base font-medium transition-colors border-b-2 ${
+                  pathWithoutLocale === '/sources'
+                    ? 'text-foreground font-semibold border-accent-foreground'
+                    : 'text-muted-foreground hover:text-foreground border-transparent hover:border-accent-foreground/50'
+                }`}
+              >
+                {t('nav.sources')}
+              </Link>
             </div>
           </div>
 
@@ -198,8 +211,8 @@ export function PublicNavbar() {
             </Link>
           </div>
 
-          {/* Right Side: Language + Admin Tools + User Menu (Desktop only) */}
-          <div className="hidden md:flex items-center space-x-6 rtl:space-x-reverse">
+          {/* Right Side: Language + User Menu (Desktop only) */}
+          <div className="hidden md:flex items-center space-x-4 rtl:space-x-reverse">
             
             {/* Language Selector */}
             {showLanguageToggle && (
@@ -214,24 +227,58 @@ export function PublicNavbar() {
                 </span>
               </button>
             )}
-            
-            {/* Staff Tools Link - Desktop only */}
-            {isStaff && (
-              <Link
-                href="/tools"
-                className="text-muted-foreground hover:text-foreground px-3 py-2 text-md font-medium cursor-pointer"
-              >
-                {t('nav.adminTools')} →
-              </Link>
-            )}
 
-            {/* User Button / Sign In - Desktop only */}
+            {/* User Menu - Desktop only */}
             {isSignedIn ? (
-              <SignOutButton>
-                <button className="text-muted-foreground hover:text-foreground px-3 py-2 text-md font-medium transition-colors cursor-pointer">
-                  {t('nav.signOut')}
-                </button>
-              </SignOutButton>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                    {user?.imageUrl ? (
+                      <Image
+                        src={user.imageUrl}
+                        alt={user.fullName || 'User'}
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    )}
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align={locale === 'ar' ? 'start' : 'end'} className="w-56">
+                  <div className="px-2 py-1.5">
+                    <p className="text-xs text-muted-foreground">{t('nav.signedInAs') || 'Signed in as'}</p>
+                    <p className="text-sm font-medium truncate">{user?.emailAddresses[0]?.emailAddress}</p>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${locale}/contribution`} className="cursor-pointer flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      {t('nav.contributions')}
+                    </Link>
+                  </DropdownMenuItem>
+                  {isStaff && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/tools" className="cursor-pointer flex items-center gap-2">
+                        <Settings className="h-4 w-4" />
+                        {t('nav.adminTools')}
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <SignOutButton>
+                      <button className="w-full cursor-pointer flex items-center gap-2">
+                        <LogOut className="h-4 w-4" />
+                        {t('nav.signOut')}
+                      </button>
+                    </SignOutButton>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <SignInButton mode="modal">
                 <button className="text-muted-foreground hover:text-foreground px-3 py-2 text-md font-medium transition-colors cursor-pointer">

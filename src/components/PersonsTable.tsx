@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
-import { Slider } from '@/components/ui/slider';
 import { List, Grid, Download } from 'lucide-react';
 import { useTranslation, useFormatDate, useFormatNumber } from '@/lib/i18n-context';
 import { PersonSearch } from '@/components/PersonSearch';
@@ -49,11 +48,9 @@ export function PersonsTable() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<'list' | 'photos'>('photos');
-  const [maxAge, setMaxAge] = useState<number>(100);
-  const [sliderValue, setSliderValue] = useState<number>(100); // Temporary state for slider visual
   const [downloading, setDownloading] = useState(false);
 
-  const fetchPersons = useCallback(async (page: number = 1, mode: 'list' | 'photos' = 'list', maxAgeFilter?: number) => {
+  const fetchPersons = useCallback(async (page: number = 1, mode: 'list' | 'photos' = 'list') => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -64,11 +61,6 @@ export function PersonsTable() {
       // TODO: Remove this comment once real photos are in DB
       // Previously filtered to only records with photos, but now we show all records
       // since we have mock photos for development
-      
-      // Add max age filter if provided and not default (100)
-      if (maxAgeFilter !== undefined && maxAgeFilter < 100) {
-        params.append('maxAge', maxAgeFilter.toString());
-      }
       
       const response = await fetch(`/api/public/persons?${params.toString()}`);
       const result = await response.json();
@@ -87,10 +79,10 @@ export function PersonsTable() {
     }
   }, []);
 
-  // Fetch on mount and when viewMode or maxAge changes
+  // Fetch on mount and when viewMode changes
   useEffect(() => {
-    fetchPersons(1, viewMode, maxAge);
-  }, [fetchPersons, viewMode, maxAge]);
+    fetchPersons(1, viewMode);
+  }, [fetchPersons, viewMode]);
 
 
   const handleDownloadCSV = async () => {
@@ -102,10 +94,6 @@ export function PersonsTable() {
       
       if (viewMode === 'photos') {
         params.append('filter', 'with_photo');
-      }
-      
-      if (maxAge < 100) {
-        params.append('maxAge', maxAge.toString());
       }
       
       const response = await fetch(`/api/public/persons/export?${params.toString()}`);
@@ -413,7 +401,7 @@ export function PersonsTable() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => fetchPersons(currentPage - 1, viewMode, maxAge)}
+                  onClick={() => fetchPersons(currentPage - 1, viewMode)}
                   disabled={currentPage === 1}
                 >
                   {t('database.pagination.previous')}
@@ -421,7 +409,7 @@ export function PersonsTable() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => fetchPersons(currentPage + 1, viewMode, maxAge)}
+                  onClick={() => fetchPersons(currentPage + 1, viewMode)}
                   disabled={currentPage === data.pagination.pages}
                 >
                   {t('database.pagination.next')}

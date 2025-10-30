@@ -3,17 +3,6 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { defaultLocale, isValidLocale, getLocaleFromPathname, type Locale } from './lib/i18n';
 
-// Define public routes (routes that don't require authentication)
-const isPublicRoute = createRouteMatcher([
-  '/:locale?/',
-  '/:locale?/about',
-  '/:locale?/database',
-  '/:locale?/person/:id',
-  '/sign-in(.*)',
-  '/sign-up(.*)',
-  '/api/public(.*)',
-]);
-
 // Define routes that should not have locale prefix
 const isNonLocalizedRoute = createRouteMatcher([
   '/tools(.*)',      // Admin tools stay in English

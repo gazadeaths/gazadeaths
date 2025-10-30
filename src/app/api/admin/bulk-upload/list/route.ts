@@ -2,9 +2,6 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/auth-utils';
 
-// PostgreSQL bind variable limit - batch queries to avoid hitting 32,767 limit
-const MAX_BATCH_SIZE = 10000;
-
 export async function GET() {
   try {
     // Check authentication and admin role
@@ -31,61 +28,15 @@ export async function GET() {
       },
     });
     
-    // Calculate stats for each upload and check if it can be rolled back
-    const uploadsWithStats = await Promise.all(bulkUploads.map(async (upload) => {
+    // Calculate stats for each upload
+    // Note: canRollback is always true now - actual rollback eligibility is checked server-side when attempting rollback
+    const uploadsWithStats = bulkUploads.map((upload) => {
       const versions = upload.changeSource.versions;
       
       // Calculate stats by counting changeType per version
       const inserts = versions.filter(v => v.changeType === 'INSERT').length;
       const updates = versions.filter(v => v.changeType === 'UPDATE').length;
       const deletes = versions.filter(v => v.changeType === 'DELETE').length;
-      
-      // Check if this upload can be rolled back (LIFO check)
-      let canRollback = true;
-      
-      if (versions.length > 0) {
-        // Get all affected person IDs
-        const affectedPersonIds = await prisma.personVersion.findMany({
-          where: { sourceId: upload.changeSource.id },
-          select: { personId: true, versionNumber: true },
-        });
-        
-        const personIds = [...new Set(affectedPersonIds.map(v => v.personId))];
-        const maxVersionNumbers = new Map<string, number>();
-        
-        affectedPersonIds.forEach(v => {
-          const current = maxVersionNumbers.get(v.personId) || 0;
-          if (v.versionNumber > current) {
-            maxVersionNumbers.set(v.personId, v.versionNumber);
-          }
-        });
-        
-        // Check if any person has a higher version from a different source
-        // Batch the query to avoid PostgreSQL bind variable limit (32,767)
-        const conflictingVersions = [];
-        
-        for (let i = 0; i < personIds.length; i += MAX_BATCH_SIZE) {
-          const batch = personIds.slice(i, i + MAX_BATCH_SIZE);
-          const batchResults = await prisma.personVersion.findMany({
-            where: {
-              personId: { in: batch },
-              sourceId: { not: upload.changeSource.id },
-            },
-            select: {
-              personId: true,
-              versionNumber: true,
-            },
-          });
-          conflictingVersions.push(...batchResults);
-        }
-        
-        const conflicts = conflictingVersions.filter(cv => {
-          const uploadMaxVersion = maxVersionNumbers.get(cv.personId);
-          return uploadMaxVersion && cv.versionNumber > uploadMaxVersion;
-        });
-        
-        canRollback = conflicts.length === 0;
-      }
       
       return {
         id: upload.id,
@@ -95,7 +46,6 @@ export async function GET() {
         uploadedAt: upload.uploadedAt,
         fileUrl: upload.fileUrl, // Blob storage URL for downloading original CSV
         fileSize: upload.fileSize, // File size in bytes
-        canRollback,
         stats: {
           total: versions.length,
           inserts,
@@ -103,7 +53,7 @@ export async function GET() {
           deletes,
         },
       };
-    }));
+    });
     
     return NextResponse.json({
       success: true,

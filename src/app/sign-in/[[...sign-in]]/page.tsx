@@ -8,7 +8,7 @@ export default function SignInPage() {
           appearance={{
             elements: {
               rootBox: "mx-auto",
-              card: "bg-card shadow-2xl rounded-lg",
+              card: "bg-card text-card-foreground border border-border shadow-2xl rounded-lg",
             }
           }}
           routing="path"

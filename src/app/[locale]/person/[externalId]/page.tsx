@@ -307,13 +307,18 @@ export default function PersonDetailPage() {
 
       {/* Person Photo */}
       {person.photoUrlThumb && (
-        <div className="w-full md:w-1/3 aspect-square">
+        <div className="w-full md:w-1/3 aspect-square rounded-lg border border-dashed border-white/80 p-3 bg-card/20 relative">
+          <div className="absolute inset-3 z-10 flex items-center justify-center">
+            <div className="rounded-md border border-border bg-background/70 text-foreground text-center text-xs font-medium tracking-wide px-2 py-1">
+              {t('person.exampleImage')}
+            </div>
+          </div>
           <Image
             src={person.photoUrlThumb}
             alt={`Photo of ${person.name}`}
             width={400}
             height={400}
-            className="w-full h-full object-cover rounded-lg border-2"
+            className="w-full h-full object-cover rounded-md opacity-80"
             unoptimized
           />
         </div>

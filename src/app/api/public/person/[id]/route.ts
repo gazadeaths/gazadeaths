@@ -140,7 +140,6 @@ export async function GET(
     }
 
     // Public API response (minimal data, no deleted flag)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { isDeleted, ...publicData } = person;
     return NextResponse.json({
       success: true,

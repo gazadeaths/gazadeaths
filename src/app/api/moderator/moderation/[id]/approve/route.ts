@@ -105,7 +105,7 @@ export async function POST(
       });
     }
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // Create change source
       const changeSource = await tx.changeSource.create({
         data: {

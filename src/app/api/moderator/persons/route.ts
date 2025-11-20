@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
             personId: true
           },
           distinct: ['personId']
-        }).then(versions => versions.map(v => v.personId));
+        }).then((versions: { personId: string }[]) => versions.map((v: typeof versions[number]) => v.personId));
 
         whereClause = {
           id: { in: personIds.length > 0 ? personIds : ['no-match'] },
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
             personId: true
           },
           distinct: ['personId']
-        }).then(versions => versions.map(v => v.personId));
+        }).then((versions: { personId: string }[]) => versions.map((v: typeof versions[number]) => v.personId));
 
         whereClause = {
           id: { in: personIds.length > 0 ? personIds : ['no-match'] },
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
     ]);
     
     // Transform to include version number directly
-    const personsWithVersion = persons.map(person => ({
+    const personsWithVersion = persons.map((person: typeof persons[number]) => ({
       ...person,
       currentVersion: person.versions[0]?.versionNumber || 0,
       versions: undefined, // Remove the versions array from response

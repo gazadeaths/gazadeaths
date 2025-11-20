@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
     const mockPhotos = Array.from({ length: 48 }, (_, i) => `/people/person${i + 1}.webp`);
     
     // Use index-based assignment (consistent with stable ordering)
-    const personsWithMockPhotos = persons.map((person, index) => ({
+    const personsWithMockPhotos = persons.map((person: typeof persons[number], index: number) => ({
       ...person,
       photoUrlThumb: person.photoUrlThumb || mockPhotos[(skip + index) % mockPhotos.length]
     }));

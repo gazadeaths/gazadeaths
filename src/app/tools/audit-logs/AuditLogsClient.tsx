@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Prisma } from '@prisma/client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Prisma } from '@prisma/client';
 
 interface AuditLog {
   id: string;
@@ -142,12 +142,12 @@ export default function AuditLogsClient() {
                     <td className="px-6 py-4 text-sm text-foreground">
                       <div className="max-w-md">
                         {log.description}
-                        {log.metadata && Object.keys(log.metadata).length > 0 && (
+                        {log.metadata && typeof log.metadata === 'object' && Object.keys(log.metadata as object).length > 0 ? (
                           <details className="mt-1 text-xs text-muted-foreground">
                             <summary className="cursor-pointer hover:text-foreground">View metadata</summary>
                             <pre className="mt-1 p-2 bg-muted rounded overflow-x-auto">{JSON.stringify(log.metadata, null, 2)}</pre>
                           </details>
-                        )}
+                        ) : null}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">{log.ipAddress || '—'}</td>

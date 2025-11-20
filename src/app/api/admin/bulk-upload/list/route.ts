@@ -30,13 +30,13 @@ export async function GET() {
     
     // Calculate stats for each upload
     // Note: canRollback is always true now - actual rollback eligibility is checked server-side when attempting rollback
-    const uploadsWithStats = bulkUploads.map((upload) => {
+    const uploadsWithStats = bulkUploads.map((upload: typeof bulkUploads[number]) => {
       const versions = upload.changeSource.versions;
       
       // Calculate stats by counting changeType per version
-      const inserts = versions.filter(v => v.changeType === 'INSERT').length;
-      const updates = versions.filter(v => v.changeType === 'UPDATE').length;
-      const deletes = versions.filter(v => v.changeType === 'DELETE').length;
+      const inserts = versions.filter((v: typeof versions[number]) => v.changeType === 'INSERT').length;
+      const updates = versions.filter((v: typeof versions[number]) => v.changeType === 'UPDATE').length;
+      const deletes = versions.filter((v: typeof versions[number]) => v.changeType === 'DELETE').length;
       
       return {
         id: upload.id,

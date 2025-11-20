@@ -21,7 +21,7 @@ export async function GET() {
     });
 
     return NextResponse.json({
-      submissions: submissions.map((s) => ({
+      submissions: submissions.map((s: typeof submissions[number]) => ({
         id: s.id,
         type: s.type,
         status: s.status,

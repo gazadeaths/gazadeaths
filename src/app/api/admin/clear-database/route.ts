@@ -16,7 +16,7 @@ export async function POST() {
     const bulkUploads = await prisma.bulkUpload.findMany({
       select: { fileUrl: true }
     });
-    bulkUploads.forEach(upload => {
+    bulkUploads.forEach((upload: typeof bulkUploads[number]) => {
       if (upload.fileUrl) blobUrls.push(upload.fileUrl);
     });
     
@@ -24,7 +24,7 @@ export async function POST() {
     const persons = await prisma.person.findMany({
       select: { photoUrlThumb: true, photoUrlOriginal: true }
     });
-    persons.forEach(person => {
+    persons.forEach((person: typeof persons[number]) => {
       if (person.photoUrlThumb) blobUrls.push(person.photoUrlThumb);
       if (person.photoUrlOriginal) blobUrls.push(person.photoUrlOriginal);
     });

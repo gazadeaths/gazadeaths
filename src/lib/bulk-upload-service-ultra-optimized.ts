@@ -203,14 +203,14 @@ export async function simulateBulkUpload(rows: BulkUploadRow[]): Promise<Simulat
   const allExistingIds = await prisma.person.findMany({
     select: { externalId: true, isDeleted: true },
   });
-  const existingIdsSet = new Set(allExistingIds.map(p => p.externalId));
+  const existingIdsSet = new Set(allExistingIds.map((p: typeof allExistingIds[number]) => p.externalId));
   
   // Only fetch full records for IDs that exist in the CSV (potential updates)
   const idsToFetch = rows.filter(r => existingIdsSet.has(r.external_id)).map(r => r.external_id);
   console.log(`  📦 Fetching ${idsToFetch.length} full records for comparison (only potential updates)`);
   
   const matchingPersons = idsToFetch.length > 0 ? await fetchPersonsInBatches(idsToFetch) : [];
-  const existingMap = new Map(matchingPersons.map(p => [p.externalId, p]));
+  const existingMap = new Map(matchingPersons.map((p: typeof matchingPersons[number]) => [p.externalId, p]));
   
   const insertDiffs: DiffItem[] = [];
   const updateDiffs: DiffItem[] = [];
@@ -324,12 +324,12 @@ async function computeFullDiff(rows: BulkUploadRow[]): Promise<FullDiffResult> {
   const allExistingIds = await prisma.person.findMany({
     select: { externalId: true, isDeleted: true },
   });
-  const existingIdsSet = new Set(allExistingIds.map(p => p.externalId));
+  const existingIdsSet = new Set(allExistingIds.map((p: typeof allExistingIds[number]) => p.externalId));
   
   // Fetch full records for potential updates
   const idsToFetch = rows.filter(r => existingIdsSet.has(r.external_id)).map(r => r.external_id);
   const matchingPersons = idsToFetch.length > 0 ? await fetchPersonsInBatches(idsToFetch) : [];
-  const existingMap = new Map(matchingPersons.map(p => [p.externalId, p]));
+  const existingMap = new Map(matchingPersons.map((p: typeof matchingPersons[number]) => [p.externalId, p]));
   
   const insertDiffs: DiffItem[] = [];
   const updateDiffs: DiffItem[] = [];

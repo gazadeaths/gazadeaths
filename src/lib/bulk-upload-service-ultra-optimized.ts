@@ -1,4 +1,4 @@
-import { prisma } from './prisma';
+import { prisma } from '@/lib/prisma';
 import { BulkUploadRow, parseCSV } from './csv-utils';
 import { downloadFromBlob } from './blob-storage';
 import { ChangeType, Gender } from '@prisma/client';

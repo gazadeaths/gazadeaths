@@ -1,4 +1,4 @@
-import { prisma } from './prisma';
+import { prisma } from '@/lib/prisma';
 import { currentUser } from '@clerk/nextjs/server';
 import { Prisma } from '@prisma/client';
 

@@ -7,7 +7,8 @@ export default defineConfig({
     path: 'prisma/migrations',
   },
   datasource: {
-    // Use process.env directly for Next.js compatibility
-    url: process.env.DATABASE_URL!,
+    // DATABASE_URL is required for migrations/deploy but optional for generate
+    // Empty string fallback allows `prisma generate` to work in CI without a DB connection
+    url: process.env.DATABASE_URL ?? '',
   },
 })

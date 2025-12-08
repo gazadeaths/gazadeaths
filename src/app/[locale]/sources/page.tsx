@@ -2,6 +2,9 @@ import { prisma } from '@/lib/prisma';
 import enTranslations from '@/locales/en.json';
 import arTranslations from '@/locales/ar.json';
 
+// Force dynamic rendering - this page queries the database
+export const dynamic = 'force-dynamic';
+
 interface BulkUpload {
   id: string;
   filename: string;

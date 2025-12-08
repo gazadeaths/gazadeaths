@@ -63,11 +63,11 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
   });
 
   // Calculate stats for each upload
-  const uploads: BulkUpload[] = bulkUploads.map((upload: typeof bulkUploads[number]) => {
+  const uploads: BulkUpload[] = bulkUploads.map((upload) => {
     const versions = upload.changeSource.versions;
-    const inserts = versions.filter((v: typeof versions[number]) => v.changeType === 'INSERT').length;
-    const updates = versions.filter((v: typeof versions[number]) => v.changeType === 'UPDATE').length;
-    const deletes = versions.filter((v: typeof versions[number]) => v.changeType === 'DELETE').length;
+    const inserts = versions.filter((v) => v.changeType === 'INSERT').length;
+    const updates = versions.filter((v) => v.changeType === 'UPDATE').length;
+    const deletes = versions.filter((v) => v.changeType === 'DELETE').length;
 
     return {
       id: upload.id,

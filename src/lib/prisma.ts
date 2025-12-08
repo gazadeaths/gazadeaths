@@ -1,20 +1,16 @@
 import { PrismaClient } from '@prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
 
 declare global {
   // allow global `var` declarations
+  // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined;
 }
 
-function createPrismaClient(): PrismaClient {
-  const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
-  return new PrismaClient({
-    adapter,
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-  })
-}
-
-export const prisma = global.prisma || createPrismaClient();
+// For Prisma v7 with Accelerate, provide accelerateUrl
+export const prisma = global.prisma || new PrismaClient({
+  accelerateUrl: process.env.DATABASE_URL,
+  log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+});
 
 if (process.env.NODE_ENV !== 'production') {
   global.prisma = prisma;

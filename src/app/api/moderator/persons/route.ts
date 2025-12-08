@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
             personId: true
           },
           distinct: ['personId']
-        }).then((versions: { personId: string }[]) => versions.map((v: typeof versions[number]) => v.personId));
+        }).then((versions) => versions.map((v) => v.personId));
 
         whereClause = {
           id: { in: personIds.length > 0 ? personIds : ['no-match'] },
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
             personId: true
           },
           distinct: ['personId']
-        }).then((versions: { personId: string }[]) => versions.map((v: typeof versions[number]) => v.personId));
+        }).then((versions) => versions.map((v) => v.personId));
 
         whereClause = {
           id: { in: personIds.length > 0 ? personIds : ['no-match'] },

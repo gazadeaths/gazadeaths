@@ -98,6 +98,34 @@ A: Fix forward or revert completely. Never add backwards compat as a fix.
 
 ## 🔒 Git Workflow Rules
 
+### CRITICAL: Always Work on Feature Branches
+
+**"I will ALWAYS create a new branch from main before making changes."**
+
+#### Branch Rules
+
+1. **Feature Branches Required**
+   - ALWAYS create a new branch before starting work
+   - Branch from `main` (or `master`) - never from other feature branches
+   - Use descriptive names: `feat/feature-name`, `fix/bug-name`, `refactor/what-changed`
+   - NEVER make changes directly on `main`
+
+2. **Branch Workflow**
+   ```bash
+   # Before starting ANY work:
+   git checkout main
+   git pull origin main
+   git checkout -b feat/descriptive-name
+   ```
+
+3. **Why This Matters**
+   - Enables code review before merging
+   - Easy to test changes in isolation
+   - Simple to revert if something goes wrong
+   - Keeps main branch stable
+
+---
+
 ### CRITICAL: Never Commit Without Explicit Permission
 
 **"I will NEVER commit changes unless you explicitly ask me to."**
@@ -342,12 +370,13 @@ npx shadcn@latest view @shadcn/[component]-demo  # View example
 **Your Job**: Maintain, fix bugs, add minor features
 
 **Before Coding**:
-1. ✅ Check `docs/PROJECT.md` for current features
-2. ✅ Use shadcn for ALL UI (see above)
-3. ✅ Follow TypeScript/Next.js best practices
-4. ✅ Check `docs/engineering_spec.md` for database schema
-5. ✅ **NEVER add backwards compatibility code** (see philosophy above)
-6. ✅ **NEVER commit changes without explicit permission** (see Git Workflow Rules above)
+1. ✅ **ALWAYS create a feature branch from main first** (see Git Workflow Rules)
+2. ✅ Check `docs/PROJECT.md` for current features
+3. ✅ Use shadcn for ALL UI (see above)
+4. ✅ Follow TypeScript/Next.js best practices
+5. ✅ Check `docs/engineering_spec.md` for database schema
+6. ✅ **NEVER add backwards compatibility code** (see philosophy above)
+7. ✅ **NEVER commit changes without explicit permission** (see Git Workflow Rules above)
 
 **Common Tasks**:
 - Fix bugs: Check error logs, trace through code
@@ -357,6 +386,7 @@ npx shadcn@latest view @shadcn/[component]-demo  # View example
 - Remove features: Delete ALL related code, no half-measures
 
 **Critical Reminder**:
+- **ALWAYS create feature branch from main first**
 - No legacy code support
 - No "if old then..." logic
 - Clean deletions only

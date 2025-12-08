@@ -1,184 +1,88 @@
-## fix(clerk): correct appearance variable names and build locally
-
-### Overview
-Fixes a type error from Vercel build by using valid Clerk appearance variables. Verified with a local production build to catch any other issues.
-
-### Changes
-- `src/app/layout.tsx`
-  - Replace invalid `colorInputBorder` with `colorBorder`.
-  - Remove unsupported `colorAlphaShade`.
-
-### Testing
-- Ran `npm run build` locally; build completed successfully with no type errors.
-
-### Impact
-- Build fix only; no user-facing behavior change.
-
-## feat(person): add dashed mock image frame and translated overlay label
-
-### Overview
-Adds a visually distinct dashed frame and overlay label to the person detail mock image to clarify example imagery. Aligns styles with shadcn tokens and supports Arabic translation.
-
-### Changes
-- `src/app/[locale]/person/[externalId]/page.tsx`
-  - Wrap person image with rounded container using shadcn tokens and dashed border.
-  - Border: `border border-dashed border-white/80` (1px, 80% white), `p-3` inner padding, `bg-card/20` background.
-  - Centered overlay label container; uses `{t('person.exampleImage')}`.
-  - Set image opacity to 80% for mock clarity.
-- `src/locales/en.json`
-  - Add `person.exampleImage`: "Example Image".
-- `src/locales/ar.json`
-  - Add `person.exampleImage`: "صورة مثال".
-
-### Testing Checklist
-- Person detail page shows the image within a dashed white border with inner padding.
-- Label appears centered horizontally and vertically, readable on both themes.
-- Image opacity is 80%.
-- Switching locale to Arabic shows Arabic label.
-
-### Impact
-- Visual/UI-only; no API or data model changes.
-- Improves clarity that the displayed image is an example/mock.
-
-## chore(clerk, styles): restore Clerk button/input borders/backgrounds and align with dark theme
-
-### Overview
-This change fixes visual regressions where Clerk buttons and inputs lost borders and background fills under our global dark palette. We align Clerk’s appearance with our shadcn tokens and ensure sign-in/up cards render with proper borders and readable text.
-
-### Changes
-- Update `src/app/layout.tsx` to configure `ClerkProvider.appearance`:
-  - Set `variables` to map Clerk colors to shadcn tokens (`--background`, `--foreground`, `--primary`, `--input`, `--border`, etc.).
-  - Define `elements` mappings so core parts (card, primary buttons, inputs, footer, headers) use shadcn classes for backgrounds, borders, and text colors.
-- Update `src/app/sign-in/[[...sign-in]]/page.tsx` to ensure the Clerk card uses `bg-card text-card-foreground border border-border` and retains rounded/shadow.
-- Update `src/app/sign-up/[[...sign-up]]/page.tsx` similarly for visual consistency.
-
-### Technical Notes
-- Keeps `baseTheme: shadcn` but explicitly sets Clerk appearance `variables` so global dark CSS no longer overrides Clerk unintentionally.
-- Restores input visuals via `formFieldInput: 'bg-input text-foreground border border-border placeholder:text-muted-foreground'`.
-- Restores primary button visuals via `formButtonPrimary: 'bg-primary text-primary-foreground hover:bg-primary/90 border border-border'`.
-- Cards now consistently use `bg-card text-card-foreground border border-border` to match site theme.
-
-### Testing Checklist
-- Navigate to `/sign-in` and `/sign-up`:
-  - Verify form inputs have visible borders and dark input backgrounds with legible text/placeholder.
-  - Verify primary buttons have background, border, and hover state.
-  - Verify the Clerk card background matches `bg-card` and shows a visible border.
-- Smoke test other Clerk surfaces (modals, toasts if any) for contrast and borders.
-
-### Impact
-- Visual fix only; no API or behavioral changes.
-- Unblocks dark theme readability for Clerk components across the app.
-
-
-feat: Optimize landing page performance and fix photo consistency
+# feat: migrate Prisma ORM from v6 to v7 + update all packages
 
 ## Overview
+Complete migration from Prisma ORM v6.19.0 to v7.1.0, implementing Direct TCP connections via the `@prisma/adapter-pg` adapter as recommended for Prisma v7. Also updated all packages to latest versions.
 
-This commit improves landing page load performance and fixes photo consistency issues across the database and person detail pages. The changes enable Next.js image optimization, reduce duplicate photos, and ensure consistent photo assignment across all endpoints.
+## Changes
 
-## Changes Made
+### Dependencies (package.json)
+**Prisma Migration:**
+- Upgraded `prisma` from ^6.19.0 to ^7.1.0
+- Upgraded `@prisma/client` from ^6.19.0 to ^7.1.0
+- Upgraded `@prisma/adapter-pg` from ^7.0.0 to ^7.1.0
 
-### 1. Enable Next.js Image Optimization (Landing Page)
-**File:** `src/app/[locale]/page.tsx`
+**All Package Updates:**
+- `@clerk/nextjs` ^6.35.2 → ^6.36.0
+- `@clerk/themes` ^2.4.37 → ^2.4.42
+- `@types/react` ^19.2.6 → ^19.2.7
+- `@vercel/analytics` ^1.5.0 → ^1.6.1
+- `eslint-config-next` 16.0.3 → 16.0.7
+- `lucide-react` ^0.554.0 → ^0.556.0
+- `next` 16.0.3 → 16.0.7
+- `react` 19.2.0 → 19.2.1
+- `react-dom` 19.2.0 → 19.2.1
+- `react-hook-form` ^7.66.1 → ^7.68.0
+- `shadcn` ^3.5.0 → ^3.5.1
+- `svix` ^1.81.0 → ^1.82.0
+- `tsx` ^4.20.6 → ^4.21.0
+- `zod` ^4.1.12 → ^4.1.13
 
-- Removed `unoptimized` flag from `<Image>` components
-- Enables automatic WebP/AVIF conversion based on browser support
-- Enables lazy loading for below-the-fold images
-- Enables responsive image sizes based on `sizes` prop
+### Schema Changes (prisma/schema.prisma)
+- Changed generator provider from `prisma-client-js` to `prisma-client`
+- Added `output = "./generated/prisma"` to generator block
+- Removed `url = env("DATABASE_URL")` from datasource block (moved to prisma.config.ts)
 
-**Impact:** 60-80% reduction in image data transfer, faster load times
+### New Configuration (prisma.config.ts)
+Created new Prisma v7 configuration file at project root:
+- Defines schema and migrations paths
+- Centralized datasource URL configuration
+- Uses `dotenv/config` for environment variable loading
 
-### 2. Optimize Hero Layout for More Interactive Area
-**File:** `src/app/[locale]/page.tsx`
+### Client Refactor (src/lib/prisma.ts)
+- Updated import path from `@prisma/client` to local generated client
+- Implemented `PrismaPg` adapter for Direct TCP connections
+- Client now uses adapter pattern: `new PrismaClient({ adapter })`
 
-- Changed hero container from `max-w-6xl` to `w-fit`
-- Hero content now wraps tightly to actual text width
-- Exposes more background photo grid on left/right sides
-- More hoverable area for background images
+### Path Alias (tsconfig.json)
+Added `@prisma/*` path alias mapping to `./prisma/generated/prisma/*`
+- Allows clean imports: `import { PrismaClient } from '@prisma/client'`
+- Same import syntax as before, but now points to generated client
 
-### 3. Fix Photo Consistency Across Pages
-**Files:** 
-- `src/app/api/public/persons/route.ts`
-- `src/app/api/public/person/[id]/route.ts`
+### ESLint Configuration (eslint.config.mjs)
+- Added `prisma/generated/**` to ignores to prevent linting generated files
 
-**Problem:** Mock photos were assigned using hash-based logic, causing same person to show different photos on list vs detail pages.
+### Cursor Rules (.cursorrules)
+- Added "Always Work on Feature Branches" rule to Git Workflow section
+- Feature branches from main are now required before starting any work
 
-**Solution:** 
-- Changed to index-based assignment based on stable position in ordered list
-- List API: Uses `(skip + index) % 48` for pagination-aware assignment
-- Detail API: Calculates person's position by counting records before it
-- Same person → same position → same photo (consistent across all pages)
-
-### 4. Add Stable Sorting for Deterministic Order
-**File:** `src/app/api/public/persons/route.ts`
-
-- Changed from single `orderBy: { updatedAt: 'desc' }` 
-- To multi-field: `orderBy: [{ updatedAt: 'desc' }, { id: 'asc' }]`
-- When multiple records have same `updatedAt`, sort by `id` as tiebreaker
-- Prevents random reordering on database page reloads
-
-### 5. Eliminate Duplicate Photos on Landing Page
-**File:** `src/app/[locale]/page.tsx`
-
-- Increased API fetch from 24 to 250 persons
-- Removed `totalPhotos` constant and repetition logic
-- Changed from `Array.from({ length: 250 }).map()` to `persons.map()`
-- First 48 photos are now unique, then cycles naturally
+### Hydration Fix (src/components/PublicNavbar.tsx)
+- Fixed Radix UI hydration mismatch with Sheet component
+- Added mounted state to defer Sheet rendering until after hydration
+- Prevents `aria-controls` ID mismatch between server and client
 
 ## Technical Details
 
-### Mock Photo Assignment Logic
+### Prisma v7 Key Changes
+1. **Direct TCP by Default**: v7 uses native database adapters instead of the query engine binary
+2. **New Client Generator**: `prisma-client` replaces `prisma-client-js`
+3. **Configuration File**: `prisma.config.ts` centralizes CLI and datasource configuration
+4. **Adapter Pattern**: Database connections now use typed adapters like `PrismaPg`
 
-**Before (Hash-based):**
-```typescript
-const hash = personId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-return mockPhotos[hash % 48];
+### Accelerate Status
 ```
-Problem: Different hash → different photo for same person across endpoints
-
-**After (Index-based):**
-```typescript
-// List API
-mockPhotos[(skip + index) % 48]
-
-// Detail API
-const countBefore = await prisma.person.count({ where: { /* persons before this one */ }});
-mockPhotos[countBefore % 48]
+Direct TCP is the recommended default for Prisma v7.
+No Prisma Accelerate detected in this project - Direct TCP migration applied.
 ```
-Solution: Same position in ordered list → same photo everywhere
-
-### Sort Order Consistency
-
-Ordering: `updatedAt DESC, id ASC`
-- Most recently updated records appear first
-- Records with same timestamp sorted by UUID (stable, never changes)
-- Guarantees deterministic ordering across all queries
-
-## Performance Impact
-
-**Pros:**
-- Next.js image optimization: 60-80% smaller images
-- Lazy loading: Only visible images load initially
-- Better perceived performance
-
-**Cons:**
-- Fetching 250 persons vs 24: +200-400ms on initial load
-- Individual person detail: +1 additional COUNT query
-
-**Net Result:** Faster overall due to image optimization gains
 
 ## Testing Checklist
+- [x] `npm install` completes successfully
+- [x] `prisma generate` creates client in ./prisma/generated/prisma
+- [x] `npm run lint` passes with no errors
+- [ ] `npm run build` completes (requires DATABASE_URL)
+- [ ] `prisma migrate dev` works (requires DATABASE_URL)
+- [ ] Application queries work correctly
 
-- [x] Landing page loads 250 unique persons
-- [x] No duplicate photos in first 48 positions
-- [x] Database page maintains consistent order on reload
-- [x] Clicking from database → person detail shows same photo
-- [x] Images are lazy loaded (check Network tab)
-- [x] Image format is WebP/AVIF (check Network tab)
-- [x] Responsive images served based on viewport size
-
-## Notes
-
-- Mock photos reduced from 50 to 48 (user adjustment in separate edit)
-- This is temporary until real photos are uploaded to database
-- Once real photos are in DB, remove all mock photo logic
+## Impact
+- **Non-breaking**: Import paths remain `@prisma/client` (via path alias to generated client)
+- **Performance**: Direct TCP connections may improve latency vs query engine
+- **Compatibility**: Requires Node.js ≥ 20.19 and TypeScript ≥ 5.4

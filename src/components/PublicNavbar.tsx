@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Menu, Globe, User, LogOut, Settings, FileText } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from '@/lib/i18n-context';
 import { removeLocaleFromPathname, addLocaleToPathname, type Locale } from '@/lib/i18n';
 import Image from 'next/image';
@@ -16,9 +16,15 @@ export function PublicNavbar() {
   const { isSignedIn } = useAuth();
   const { user } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const { t, locale } = useTranslation();
+
+  // Prevent hydration mismatch with Radix UI components
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isStaff = user?.publicMetadata?.role === 'admin' || user?.publicMetadata?.role === 'moderator';
   const isPersonPage = pathname?.startsWith(`/${locale}/person/`);
@@ -48,14 +54,15 @@ export function PublicNavbar() {
         <div className="flex justify-between h-16 items-center">
           {/* Left: Navigation Links */}
           <div className="flex items-center space-x-6 rtl:space-x-reverse">
-            {/* Mobile Menu Button - Always visible */}
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              </SheetTrigger>
+            {/* Mobile Menu Button - Only render after mount to prevent hydration mismatch */}
+            {mounted ? (
+              <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Toggle menu</span>
+                  </Button>
+                </SheetTrigger>
               <SheetContent side={locale === 'ar' ? 'right' : 'left'} className="w-64">
                 <SheetHeader>
                   <SheetTitle>{t('nav.about')}</SheetTitle>
@@ -157,7 +164,13 @@ export function PublicNavbar() {
                   </div>
                 </nav>
               </SheetContent>
-            </Sheet>
+              </Sheet>
+            ) : (
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            )}
 
             {/* Desktop Navigation - Always visible */}
             <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">

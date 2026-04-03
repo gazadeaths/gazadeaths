@@ -117,24 +117,14 @@ export default function PersonDetailPage() {
   const getChangeTypeBadge = (changeType: string) => {
     const type = changeType as 'INSERT' | 'UPDATE' | 'DELETE';
     const label = t(`person.versionHistory.changeTypes.${type}`);
-    
-    switch (changeType) {
-      case 'INSERT':
-        return <Badge variant="default">{label}</Badge>;
-      case 'UPDATE':
-        return <Badge variant="secondary">{label}</Badge>;
-      case 'DELETE':
-        return <Badge variant="destructive">{label}</Badge>;
-      default:
-        return <Badge variant="outline">{changeType}</Badge>;
-    }
+    return <Badge variant="outline">{label}</Badge>;
   };
 
   const getSourceBadge = (source: PersonVersion['source']) => {
     if (source.type === 'BULK_UPLOAD') {
-      return <Badge variant="default">{t('person.versionHistory.sources.BULK_UPLOAD')}</Badge>;
+      return <Badge variant="outline">{t('person.versionHistory.sources.BULK_UPLOAD')}</Badge>;
     } else if (source.type === 'COMMUNITY_SUBMISSION') {
-      return <Badge variant="secondary">{t('person.versionHistory.sources.COMMUNITY_SUBMISSION')}</Badge>;
+      return <Badge variant="outline">{t('person.versionHistory.sources.COMMUNITY_SUBMISSION')}</Badge>;
     }
     return <Badge variant="outline">{source.type}</Badge>;
   };
@@ -191,12 +181,12 @@ export default function PersonDetailPage() {
       </div>
 
       {/* Person Name */}
-      <div className="px-4 sm:px-6 lg:px-8 pt-12 pb-10">
+      <div className="px-4 sm:px-6 lg:px-8 pt-8 pb-6 min-[1440px]:pt-12 min-[1440px]:pb-10">
         {locale === 'ar' ? (
           <>
-            <h1 className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl text-foreground">{person.name}</h1>
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl min-[1440px]:text-6xl text-foreground">{person.name}</h1>
             {person.nameEnglish && (
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl text-muted-foreground mt-2">
+              <h2 className="text-xl sm:text-2xl min-[1440px]:text-3xl text-muted-foreground mt-2">
                 {person.nameEnglish}
               </h2>
             )}
@@ -205,13 +195,13 @@ export default function PersonDetailPage() {
           <>
             {person.nameEnglish ? (
               <>
-                <h1 className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl text-foreground">{person.nameEnglish}</h1>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl text-muted-foreground mt-2">
+                <h1 className="text-3xl font-bold tracking-tight sm:text-4xl min-[1440px]:text-6xl text-foreground">{person.nameEnglish}</h1>
+                <h2 className="text-xl sm:text-2xl min-[1440px]:text-3xl text-muted-foreground mt-2">
                   {person.name}
                 </h2>
               </>
             ) : (
-              <h1 className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl text-foreground">{person.name}</h1>
+              <h1 className="text-3xl font-bold tracking-tight sm:text-4xl min-[1440px]:text-6xl text-foreground">{person.name}</h1>
             )}
           </>
         )}
@@ -228,7 +218,7 @@ export default function PersonDetailPage() {
               <Database className="w-5 h-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">{t('person.fields.externalId')}</p>
-                <p className="text-lg font-mono force-ltr">{person.externalId}</p>
+                <p className="text-base min-[1440px]:text-lg font-mono force-ltr">{person.externalId}</p>
               </div>
             </div>
 
@@ -238,11 +228,7 @@ export default function PersonDetailPage() {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">{t('person.fields.gender')}</p>
                 <Badge
-                  variant={
-                    person.gender === 'MALE' ? 'default' :
-                    person.gender === 'FEMALE' ? 'secondary' :
-                    'outline'
-                  }
+                  variant="outline"
                   className="mt-1"
                 >
                   {t(`person.gender.${person.gender}`)}
@@ -255,16 +241,16 @@ export default function PersonDetailPage() {
               <Calendar className="w-5 h-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">{t('person.fields.dateOfBirth')}</p>
-                <p className="text-lg force-ltr">{formatDate(person.dateOfBirth)}</p>
+                <p className="text-base min-[1440px]:text-lg force-ltr">{formatDate(person.dateOfBirth)}</p>
               </div>
             </div>
 
             {/* Date of Death */}
             <div className="flex items-start gap-3">
-              <Calendar className="w-5 h-5 text-destructive mt-0.5" />
+              <Calendar className="w-5 h-5 text-muted-foreground mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">{t('person.fields.dateOfDeath')}</p>
-                <p className="text-lg text-destructive force-ltr">
+                <p className="text-base min-[1440px]:text-lg text-foreground force-ltr">
                   {formatDate(person.dateOfDeath)}
                 </p>
               </div>
@@ -383,7 +369,7 @@ export default function PersonDetailPage() {
                     </TableCell>
                     <TableCell className="force-ltr">
                       {version.dateOfDeath ? (
-                        <span className="text-destructive">
+                        <span>
                           {formatDate(version.dateOfDeath)}
                         </span>
                       ) : (

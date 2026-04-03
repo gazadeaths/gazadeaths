@@ -213,13 +213,13 @@ export function PersonsTable() {
                 >
                   {t('database.columns.dateOfBirth')}<SortIcon field="dateOfBirth" />
                 </TableHead>
-                <TableHead>{t('database.columns.dateOfDeath')}</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>{t('database.columns.photo')}</TableHead>
-                <TableHead>Version</TableHead>
-                <TableHead>{t('database.columns.deleted')}</TableHead>
+                <TableHead className="hidden sm:table-cell">{t('database.columns.dateOfDeath')}</TableHead>
+                <TableHead className="hidden lg:table-cell">Location</TableHead>
+                <TableHead className="hidden md:table-cell">{t('database.columns.photo')}</TableHead>
+                <TableHead className="hidden lg:table-cell">Version</TableHead>
+                <TableHead className="hidden md:table-cell">{t('database.columns.deleted')}</TableHead>
                 <TableHead
-                  className={sortableHeadClass}
+                  className={`hidden sm:table-cell ${sortableHeadClass}`}
                   onClick={() => handleSort('updatedAt')}
                 >
                   Last Updated<SortIcon field="updatedAt" />
@@ -264,7 +264,7 @@ export function PersonsTable() {
                       {formatDate(person.dateOfBirth)}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
+                  <TableCell className="hidden sm:table-cell py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {person.dateOfDeath ? (
                         <span>{formatDate(person.dateOfDeath)}</span>
@@ -273,7 +273,7 @@ export function PersonsTable() {
                       )}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
+                  <TableCell className="hidden lg:table-cell py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {person.locationOfDeathLat && person.locationOfDeathLng ? (
                         <span>
@@ -284,7 +284,7 @@ export function PersonsTable() {
                       )}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
+                  <TableCell className="hidden md:table-cell py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {person.photoUrlThumb ? (
                         <Image
@@ -300,21 +300,21 @@ export function PersonsTable() {
                       )}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
+                  <TableCell className="hidden lg:table-cell py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       <Badge variant="outline">
                         v{person.currentVersion}
                       </Badge>
                     </Link>
                   </TableCell>
-                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
+                  <TableCell className="hidden md:table-cell py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       <Badge variant="outline">
                         {person.isDeleted ? t('person.versionHistory.yes') : t('person.versionHistory.no')}
                       </Badge>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-muted-foreground py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
+                  <TableCell className="hidden sm:table-cell text-muted-foreground py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {formatDate(person.updatedAt)}
                     </Link>
@@ -327,7 +327,7 @@ export function PersonsTable() {
         </div>
 
         {/* Pagination and Download */}
-        <div className="flex items-center justify-between mt-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-6">
           <div className="flex items-center gap-4">
             {data.pagination.pages > 1 && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground force-ltr">
@@ -356,7 +356,8 @@ export function PersonsTable() {
               className="gap-2"
             >
               <Download className="h-4 w-4" />
-              {downloading ? t('common.loading') : 'Download CSV'}
+              <span className="hidden sm:inline">{downloading ? t('common.loading') : 'Download CSV'}</span>
+              <span className="sm:hidden">{downloading ? '...' : 'CSV'}</span>
             </Button>
 
             {data.pagination.pages > 1 && (

@@ -173,10 +173,10 @@ export function PublicNavbar() {
             )}
 
             {/* Desktop Navigation - Always visible */}
-            <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
+            <div className="hidden md:flex items-center space-x-4 min-[1440px]:space-x-8 rtl:space-x-reverse">
               <Link
                 href={`/${locale}/about`}
-                className={`px-3 py-2 text-base font-medium transition-colors border-b-2 ${
+                className={`px-2 min-[1440px]:px-3 py-2 text-sm min-[1440px]:text-base font-medium transition-colors border-b-2 ${
                   pathWithoutLocale === '/about'
                     ? 'text-foreground font-semibold border-accent-foreground'
                     : 'text-muted-foreground hover:text-foreground border-transparent hover:border-accent-foreground/50'
@@ -186,7 +186,7 @@ export function PublicNavbar() {
               </Link>
               <Link
                 href={`/${locale}/database`}
-                className={`px-3 py-2 text-base font-medium transition-colors border-b-2 ${
+                className={`px-2 min-[1440px]:px-3 py-2 text-sm min-[1440px]:text-base font-medium transition-colors border-b-2 ${
                   pathWithoutLocale === '/database' || pathWithoutLocale.startsWith('/person/')
                     ? 'text-foreground font-semibold border-accent-foreground'
                     : 'text-muted-foreground hover:text-foreground border-transparent hover:border-accent-foreground/50'
@@ -196,7 +196,7 @@ export function PublicNavbar() {
               </Link>
               <Link
                 href={`/${locale}/sources`}
-                className={`px-3 py-2 text-base font-medium transition-colors border-b-2 ${
+                className={`px-2 min-[1440px]:px-3 py-2 text-sm min-[1440px]:text-base font-medium transition-colors border-b-2 ${
                   pathWithoutLocale === '/sources'
                     ? 'text-foreground font-semibold border-accent-foreground'
                     : 'text-muted-foreground hover:text-foreground border-transparent hover:border-accent-foreground/50'
@@ -212,13 +212,13 @@ export function PublicNavbar() {
             <Link href={`/${locale}/`} className="flex items-center gap-4">
               {locale === 'ar' ? (
                 <>
-                  <span className="text-2xl text-foreground/80 whitespace-nowrap">شهداء غزة</span>
-                  <span className="text-xl font-bold text-foreground whitespace-nowrap">Gaza Witnesses</span>
+                  <span className="text-base min-[1440px]:text-2xl text-foreground/80 whitespace-nowrap">شهداء غزة</span>
+                  <span className="text-sm min-[1440px]:text-xl font-bold text-foreground whitespace-nowrap">Gaza Deaths</span>
                 </>
               ) : (
                 <>
-                  <span className="text-xl font-bold text-foreground whitespace-nowrap">Gaza Witnesses</span>
-                  <span className="text-2xl text-foreground/80 whitespace-nowrap">شهداء غزة</span>
+                  <span className="text-sm min-[1440px]:text-xl font-bold text-foreground whitespace-nowrap">Gaza Deaths</span>
+                  <span className="text-base min-[1440px]:text-2xl text-foreground/80 whitespace-nowrap">شهداء غزة</span>
                 </>
               )}
             </Link>
@@ -235,7 +235,7 @@ export function PublicNavbar() {
                 aria-label={locale === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
               >
                 <Globe className="h-4 w-4" />
-                <span className={locale === 'ar' ? 'text-md' : 'text-lg'}>
+                <span className={locale === 'ar' ? 'text-sm min-[1440px]:text-md' : 'text-sm min-[1440px]:text-lg'}>
                   {locale === 'ar' ? 'English' : 'العربية'}
                 </span>
               </button>

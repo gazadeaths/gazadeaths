@@ -140,6 +140,9 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
                       {t('sources.table.deletes')}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                      Uploaded
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('sources.table.download')}
                     </th>
                   </tr>
@@ -167,6 +170,9 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         −{upload.stats.deletes.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                        {formatDate(upload.uploadedAt)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <a

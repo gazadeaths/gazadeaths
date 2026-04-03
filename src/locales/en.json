@@ -15,8 +15,9 @@
     "subtitleCount": "deaths officially confirmed by the",
     "subtitleLocation": "Gaza",
     "subtitleEvent": "Ministry of Health",
-    "searchPlaceholder": "Search by name or ID number...",
-    "contributeText": "Contribute missing information and help remember their lives"
+    "searchPlaceholder": "Search by name or ID...",
+    "searchExplainer": "Search for a person to contribute missing information",
+    "contributeText": "Help remember their lives"
   },
   "about": {
     "title": "About",
@@ -233,7 +234,7 @@
     }
   },
   "search": {
-    "placeholder": "Search by name or ID number...",
+    "placeholder": "Search by name or ID...",
     "searching": "Searching...",
     "noResults": "No results found",
     "tryAgain": "Try a different search term",
@@ -265,7 +266,8 @@
   },
   "sources": {
     "title": "Data Sources",
-    "description": "https://github.com/gazadeaths/gazadeaths/tree/main/data_sources",
+    "description": "All official data releases from the Ministry of Health that have been imported into the database. Each release represents an update to confirmed deaths in Gaza.",
+    "rawDataLink": "Raw data source files",
     "noSources": "No data sources available yet.",
     "table": {
       "dateReleased": "Date Released",

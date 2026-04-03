@@ -26,8 +26,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="fixed inset-0 top-16 flex flex-col items-center justify-center bg-background px-4 sm:px-6 lg:px-8">
-      <div className="text-center mb-8 lg:mb-12">
+    <div className="fixed inset-0 top-20 md:top-16 flex flex-col items-center justify-center bg-background px-4 sm:px-6 lg:px-8 pb-16">
+      <div className="text-center mb-12 lg:mb-16">
         <h1 className="mb-6 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl min-[1440px]:text-7xl text-foreground">
           {t('home.title')}
         </h1>
@@ -40,11 +40,14 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="w-full max-w-md lg:max-w-xl">
+      <div className="w-full max-w-sm lg:max-w-md">
         <Card className="py-0 border-2 shadow-2xl bg-card/80 backdrop-blur-md border-border rounded-2xl">
-          <CardContent className="pt-6 pb-6 px-6 lg:pt-10 lg:pb-10 lg:px-8">
+          <CardContent className="pt-5 pb-5 px-5 lg:pt-8 lg:pb-8 lg:px-6">
+            <p className="text-center text-muted-foreground text-sm mb-3">
+              {t('home.searchExplainer')}
+            </p>
             <PersonSearch />
-            <p className="text-center text-muted-foreground text-md mt-6">
+            <p className="text-center text-muted-foreground text-sm mt-4">
               {t('home.contributeText')}
             </p>
           </CardContent>

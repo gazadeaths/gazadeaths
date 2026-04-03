@@ -99,7 +99,7 @@ export default function AboutPage() {
 
           {/* Advisory Team Section */}
           <div className="text-center border-t pt-12">
-            <h2 className="text-3xl font-bold">{t('about.teamTitle')}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold">{t('about.teamTitle')}</h2>
             <p className="text-muted-foreground mt-4 text-lg">
               {t('about.teamSubtitle')}
             </p>
@@ -141,7 +141,7 @@ export default function AboutPage() {
 
           {/* FAQ Section */}
           <div className="border-t pt-12">
-            <h2 className="mb-8 text-center text-3xl font-bold">{t('about.faqTitle')}</h2>
+            <h2 className="mb-8 text-center text-2xl sm:text-3xl font-bold">{t('about.faqTitle')}</h2>
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-0">
                 <AccordionTrigger className="text-left text-lg font-medium">

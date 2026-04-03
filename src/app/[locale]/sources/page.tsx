@@ -102,10 +102,18 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground">{t('sources.title')}</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">{t('sources.title')}</h1>
           <p className="text-muted-foreground mt-2 max-w-3xl">
             {t('sources.description')}
           </p>
+          <a
+            href="https://github.com/gazadeaths/gazadeaths/tree/main/data_sources"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline text-sm mt-2 inline-block"
+          >
+            {t('sources.rawDataLink')} &rarr;
+          </a>
         </div>
 
         {uploads.length === 0 ? (
@@ -118,31 +126,31 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
               <table className="min-w-full divide-y divide-border">
                 <thead className="bg-muted">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('sources.table.dateReleased')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('sources.table.filename')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('sources.table.comment')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('sources.table.totalChanges')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('sources.table.inserts')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('sources.table.updates')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('sources.table.deletes')}
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       Uploaded
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                       {t('sources.table.download')}
                     </th>
                   </tr>
@@ -150,31 +158,31 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
                 <tbody className="bg-background divide-y divide-border">
                   {uploads.map((upload) => (
                     <tr key={upload.id} className="hover:bg-muted/50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {formatDate(upload.dateReleased)}
                       </td>
-                      <td className="px-6 py-4 text-sm font-medium text-foreground">
+                      <td className="px-3 sm:px-6 py-4 text-sm font-medium text-foreground max-w-[120px] sm:max-w-none truncate" title={upload.filename}>
                         {upload.filename}
                       </td>
-                      <td className="px-6 py-4 text-sm text-muted-foreground max-w-xs truncate">
+                      <td className="hidden sm:table-cell px-6 py-4 text-sm text-muted-foreground max-w-xs truncate">
                         {upload.comment || '—'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {upload.stats.total.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         +{upload.stats.inserts.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {upload.stats.updates.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                      <td className="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         −{upload.stats.deletes.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                      <td className="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                         {formatDate(upload.uploadedAt)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">
                         <a
                           href={upload.fileUrl}
                           target="_blank"

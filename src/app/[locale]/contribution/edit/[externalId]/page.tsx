@@ -248,7 +248,7 @@ export default function ContributeEditPage() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Person
           </Button>
-          <h1 className="text-3xl font-bold">Contribute Information</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Contribute Information</h1>
           {personInfo ? (
             <p className="text-muted-foreground mt-2">
               Contributing information for <span className="font-semibold text-foreground">{personInfo.name}</span>

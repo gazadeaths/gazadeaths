@@ -26,25 +26,21 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative h-screen overflow-hidden bg-background pt-16">
-      {/* Main Content */}
-      <main className="relative z-10 mx-auto w-fit px-4 mt-12 pb-0 sm:px-6 lg:mt-20 lg:px-8">
-        <div className="text-center mb-10 lg:mb-16">
-          <h1 className="mb-6 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl min-[1440px]:text-7xl text-foreground">
-            {t('home.title')}
-          </h1>
-          <p className="mx-auto mb-10 lg:mb-16 max-w-3xl text-lg sm:text-xl lg:text-2xl min-[1440px]:text-4xl text-foreground/60 leading-relaxed tracking-tight">
-            {t('home.subtitle')}
-            <span className="text-destructive font-bold">
-              {' '}{stats ? <AnimatedCounter end={stats.totalPersons} /> : 0}{' '}
-            </span>
-            {t('home.subtitleCount')} <span className="font-bold text-foreground">{t('home.subtitleLocation')}</span> {t('home.subtitleEvent')}
-          </p>
-        </div>
-      </main>
+    <div className="fixed inset-0 top-16 flex flex-col items-center justify-center bg-background px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-8 lg:mb-12">
+        <h1 className="mb-6 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl min-[1440px]:text-7xl text-foreground">
+          {t('home.title')}
+        </h1>
+        <p className="mx-auto max-w-3xl text-lg sm:text-xl lg:text-2xl min-[1440px]:text-4xl text-foreground/60 leading-relaxed tracking-tight">
+          {t('home.subtitle')}
+          <span className="text-destructive font-bold">
+            {' '}{stats ? <AnimatedCounter end={stats.totalPersons} /> : 0}{' '}
+          </span>
+          {t('home.subtitleCount')} <span className="font-bold text-foreground">{t('home.subtitleLocation')}</span> {t('home.subtitleEvent')}
+        </p>
+      </div>
 
-      {/* Search Card */}
-      <div className="mx-auto max-w-md lg:max-w-xl px-4">
+      <div className="w-full max-w-md lg:max-w-xl">
         <Card className="py-0 border-2 shadow-2xl bg-card/80 backdrop-blur-md border-border rounded-2xl">
           <CardContent className="pt-6 pb-6 px-6 lg:pt-10 lg:pb-10 lg:px-8">
             <PersonSearch />

@@ -118,17 +118,20 @@ async function main() {
     `;
     console.log('  Recalculated Person.currentVersion');
 
-    // 3f: Restore updatedAt from latest PersonVersion (updateMany above overwrites it)
+    // 3f: Restore updatedAt from the MoH release date of the last bulk upload that changed each record
     await tx.$executeRaw`
       UPDATE "Person" p
-      SET "updatedAt" = COALESCE(
-        (SELECT MAX(pv."createdAt")
-         FROM "PersonVersion" pv
-         WHERE pv."personId" = p.id),
-        p."createdAt"
-      )
+      SET "updatedAt" = COALESCE(sub.release_date, p."createdAt")
+      FROM (
+        SELECT DISTINCT ON (pv."personId") pv."personId", bu."dateReleased" as release_date
+        FROM "PersonVersion" pv
+        JOIN "ChangeSource" cs ON pv."sourceId" = cs.id
+        JOIN "BulkUpload" bu ON bu."changeSourceId" = cs.id
+        ORDER BY pv."personId", pv."versionNumber" DESC
+      ) sub
+      WHERE p.id = sub."personId"
     `;
-    console.log('  Restored Person.updatedAt from version history');
+    console.log('  Restored Person.updatedAt from MoH release dates');
 
     return {
       submissions: deletedSubmissions.count,

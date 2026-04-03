@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
     const filter = searchParams.get('filter'); // Optional filter
     const minAge = searchParams.get('minAge'); // Optional minimum age
     const maxAge = searchParams.get('maxAge'); // Optional maximum age
+    const sortBy = searchParams.get('sortBy'); // Optional sort field
+    const sortOrder = searchParams.get('sortOrder') === 'asc' ? 'asc' : 'desc'; // Default desc
 
     // Build base where clause - never show deleted records publicly
     const whereClause: Prisma.PersonWhereInput = {
@@ -99,9 +101,11 @@ export async function GET(request: NextRequest) {
           // Do NOT expose: photoUrlOriginal
         },
         orderBy: [
-          { updatedAt: 'desc' },
+          ...(sortBy === 'name' ? [{ name: sortOrder }] :
+              sortBy === 'dateOfBirth' ? [{ dateOfBirth: sortOrder }] :
+              [{ updatedAt: sortOrder }]),
           { id: 'asc' }  // Stable tiebreaker for consistent ordering
-        ],
+        ] as Prisma.PersonOrderByWithRelationInput[],
         skip,
         take: limit,
       }),

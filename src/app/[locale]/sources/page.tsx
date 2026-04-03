@@ -159,13 +159,13 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {upload.stats.total.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 dark:text-green-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         +{upload.stats.inserts.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         {upload.stats.updates.toLocaleString()}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-destructive">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground">
                         −{upload.stats.deletes.toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">

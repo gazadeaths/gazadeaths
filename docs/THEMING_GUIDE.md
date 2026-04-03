@@ -556,7 +556,7 @@ hover:bg-accent active:scale-95 disabled:opacity-50
 - **shadcn/ui Docs**: https://ui.shadcn.com/docs
 - **Tailwind CSS**: https://tailwindcss.com/docs
 - **OKLCH Color Picker**: https://oklch.com
-- **Project Components**: `/Users/wil/dev/gazashuhada/src/components/ui/`
+- **Project Components**: `src/components/ui/`
 
 ## ✅ Contribution Checklist
 

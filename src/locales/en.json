@@ -1,7 +1,7 @@
 {
   "nav": {
     "about": "About",
-    "database": "Witnesses",
+    "database": "Deaths",
     "sources": "Sources",
     "contributions": "Contributions",
     "adminTools": "Admin Tools",
@@ -20,7 +20,7 @@
   },
   "about": {
     "title": "About",
-    "mission": "Gaza Witnesses has as its mission to memorialise those dead and missing in Gaza since Oct. 7, 2023. The platform combines many data sources, notably the official MoH reports and enables community contributions.",
+    "mission": "Gaza Deaths has as its mission to memorialise those dead and missing in Gaza since Oct. 7, 2023. The platform combines many data sources, notably the official MoH reports and enables community contributions.",
     "purpose": "The underlying purpose behind the platform, and mission, is to establish a canonical historical document of the human costs in Gaza. This document, and archive, will serve as a resource for international justice, historical accountability, political activism, artistic expression, and collective memory.",
     "current": "",
     "belief": "We believe that remembering is both an ethical and political act.",
@@ -96,7 +96,7 @@
     "footer": "We will not forget them."
   },
   "database": {
-    "title": "Witnesses Database",
+    "title": "Deaths Database",
     "searchPlaceholder": "Search by name or ID...",
     "noResults": "No results found",
     "loading": "Loading...",
@@ -265,7 +265,7 @@
   },
   "sources": {
     "title": "Data Sources",
-    "description": "https://github.com/Gaza-Shuhada/gazashuhada/tree/main/data_sources",
+    "description": "https://github.com/gazadeaths/gazadeaths/tree/main/data_sources",
     "noSources": "No data sources available yet.",
     "table": {
       "dateReleased": "Date Released",

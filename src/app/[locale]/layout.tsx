@@ -34,13 +34,42 @@ export async function generateMetadata({
   
   const isArabic = locale === 'ar';
   
+  const title = isArabic
+    ? "شهداء غزة - Gaza Deaths"
+    : "Gaza Deaths - شهداء غزة";
+  const description = isArabic
+    ? "توثيق وإنسانية الشهداء في غزة - مشروع لتخليد ذكرى كل من استشهد في الإبادة الجماعية"
+    : "Documenting and humanising the victims of the Gaza genocide - a project to preserve the memory of every life lost";
+  const siteUrl = "https://gazadeaths.com";
+
   return {
-    title: isArabic 
-      ? "شهداء غزة - Gaza Witnesses" 
-      : "Gaza Witnesses - شهداء غزة",
-    description: isArabic
-      ? "توثيق وإنسانية الشهداء في غزة - مشروع لتخليد ذكرى كل من استشهد في الإبادة الجماعية"
-      : "Documenting and humanising the victims of the Gaza genocide - a project to preserve the memory of every life lost",
+    title,
+    description,
+    metadataBase: new URL(siteUrl),
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        en: '/en',
+        ar: '/ar',
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${siteUrl}/${locale}`,
+      siteName: 'Gaza Deaths',
+      locale: isArabic ? 'ar_PS' : 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
     icons: {
       icon: [
         { url: '/icon.png', sizes: '32x32', type: 'image/png' },

@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
-import { List, Grid, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useTranslation, useFormatDate, useFormatNumber } from '@/lib/i18n-context';
 import { PersonSearch } from '@/components/PersonSearch';
 
@@ -47,20 +47,15 @@ export function PersonsTable() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState<'list' | 'photos'>('photos');
   const [downloading, setDownloading] = useState(false);
 
-  const fetchPersons = useCallback(async (page: number = 1, mode: 'list' | 'photos' = 'list') => {
+  const fetchPersons = useCallback(async (page: number = 1) => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
-        limit: mode === 'photos' ? '24' : '20', // More items for grid view
+        limit: '20',
       });
-      
-      // TODO: Remove this comment once real photos are in DB
-      // Previously filtered to only records with photos, but now we show all records
-      // since we have mock photos for development
       
       const response = await fetch(`/api/public/persons?${params.toString()}`);
       const result = await response.json();
@@ -79,24 +74,16 @@ export function PersonsTable() {
     }
   }, []);
 
-  // Fetch on mount and when viewMode changes
   useEffect(() => {
-    fetchPersons(1, viewMode);
-  }, [fetchPersons, viewMode]);
+    fetchPersons(1);
+  }, [fetchPersons]);
 
 
   const handleDownloadCSV = async () => {
     try {
       setDownloading(true);
       
-      // Build the same query params as the current view
-      const params = new URLSearchParams();
-      
-      if (viewMode === 'photos') {
-        params.append('filter', 'with_photo');
-      }
-      
-      const response = await fetch(`/api/public/persons/export?${params.toString()}`);
+      const response = await fetch(`/api/public/persons/export`);
       
       if (!response.ok) {
         throw new Error('Failed to download CSV');
@@ -165,29 +152,7 @@ export function PersonsTable() {
           <PersonSearch variant="header" />
         </div>
         
-        {/* Right: Photos/List Toggle */}
-        <div className="flex items-center gap-3 ml-auto">
-          <div className="flex gap-1 border rounded-md p-1">
-            <Button
-              variant={viewMode === 'photos' ? 'secondary' : 'ghost'}
-              size="sm"
-              onClick={() => setViewMode('photos')}
-              className="gap-2"
-            >
-              <Grid className="h-4 w-4" />
-              {t('database.viewMode.photos')}
-            </Button>
-            <Button
-              variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-              size="sm"
-              onClick={() => setViewMode('list')}
-              className="gap-2"
-            >
-              <List className="h-4 w-4" />
-              {t('database.viewMode.list')}
-            </Button>
-          </div>
-        </div>
+        <div className="ml-auto" />
       </div>
 
       {/* Age Filter Slider - Commented out for now */}
@@ -212,8 +177,6 @@ export function PersonsTable() {
       </div>
 
       <div className="px-4 sm:px-6 lg:px-8 py-6">
-        {viewMode === 'list' ? (
-          /* List View - Table */
           <div className="rounded-md border">
             <Table>
             <TableHeader>
@@ -246,47 +209,41 @@ export function PersonsTable() {
               ) : (
                 data.persons.map((person) => (
                 <TableRow key={person.id} className="cursor-pointer hover:bg-muted/50 transition-colors">
-                  <TableCell className="font-medium py-6 force-ltr">
+                  <TableCell className="font-medium py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {person.externalId}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-6">
+                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {person.name}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-6">
+                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
-                      <Badge 
-                        variant={
-                          person.gender === 'MALE' ? 'default' :
-                          person.gender === 'FEMALE' ? 'secondary' :
-                          'outline'
-                        }
-                      >
+                      <Badge variant="outline">
                         {t(`person.gender.${person.gender}`)}
                       </Badge>
                     </Link>
                   </TableCell>
-                  <TableCell className="py-6 force-ltr">
+                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {formatDate(person.dateOfBirth)}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-6 force-ltr">
+                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {person.dateOfDeath ? (
-                        <span className="text-destructive">{formatDate(person.dateOfDeath)}</span>
+                        <span>{formatDate(person.dateOfDeath)}</span>
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-6 force-ltr">
+                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {person.locationOfDeathLat && person.locationOfDeathLng ? (
-                        <span className="text-sm">
+                        <span>
                           {person.locationOfDeathLat.toFixed(4)}, {person.locationOfDeathLng.toFixed(4)}
                         </span>
                       ) : (
@@ -294,15 +251,15 @@ export function PersonsTable() {
                       )}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-6">
+                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {person.photoUrlThumb ? (
-                        <Image 
-                          src={person.photoUrlThumb} 
+                        <Image
+                          src={person.photoUrlThumb}
                           alt={`Photo of ${person.name}`}
-                          width={48}
-                          height={48}
-                          className="w-12 h-12 object-cover rounded border-2 hover:border-primary transition-colors cursor-pointer grayscale"
+                          width={36}
+                          height={36}
+                          className="w-8 h-8 min-[1440px]:w-12 min-[1440px]:h-12 object-cover rounded border hover:border-foreground transition-colors cursor-pointer grayscale"
                           unoptimized
                         />
                       ) : (
@@ -310,21 +267,21 @@ export function PersonsTable() {
                       )}
                     </Link>
                   </TableCell>
-                  <TableCell className="py-6">
+                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
-                      <Badge variant="secondary">
+                      <Badge variant="outline">
                         v{person.currentVersion}
                       </Badge>
                     </Link>
                   </TableCell>
-                  <TableCell className="py-6">
+                  <TableCell className="py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
-                      <Badge variant={person.isDeleted ? 'destructive' : 'default'}>
+                      <Badge variant="outline">
                         {person.isDeleted ? t('person.versionHistory.yes') : t('person.versionHistory.no')}
                       </Badge>
                     </Link>
                   </TableCell>
-                  <TableCell className="text-muted-foreground py-6 force-ltr">
+                  <TableCell className="text-muted-foreground py-3 min-[1440px]:py-6 text-xs min-[1440px]:text-sm force-ltr">
                     <Link href={`/${locale}/person/${person.externalId}`} className="block">
                       {formatDate(person.updatedAt)}
                     </Link>
@@ -335,44 +292,6 @@ export function PersonsTable() {
             </TableBody>
           </Table>
         </div>
-        ) : (
-          /* Photo View - Grid */
-          <div>
-            {loading ? (
-              <div className="flex justify-center py-16">
-                <Spinner />
-              </div>
-            ) : data.persons.length === 0 ? (
-              <div className="text-center py-16 text-muted-foreground">
-                {t('database.noResults')}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {data.persons.map((person) => (
-                  <Link 
-                    key={person.id} 
-                    href={`/${locale}/person/${person.externalId}`}
-                    className="group relative aspect-square overflow-hidden rounded-lg border-2 border-transparent hover:border-primary transition-all"
-                  >
-                    <Image
-                      src={person.photoUrlThumb || '/placeholder.jpg'}
-                      alt={person.name}
-                      fill
-                      className="object-cover grayscale group-hover:grayscale-0 transition-all"
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="absolute bottom-0 left-0 right-0 p-3">
-                        <p className="text-foreground font-semibold text-sm truncate">{person.name}</p>
-                        <p className="text-foreground/80 text-xs">{person.externalId}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Pagination and Download */}
         <div className="flex items-center justify-between mt-6">
@@ -401,7 +320,7 @@ export function PersonsTable() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => fetchPersons(currentPage - 1, viewMode)}
+                  onClick={() => fetchPersons(currentPage - 1)}
                   disabled={currentPage === 1}
                 >
                   {t('database.pagination.previous')}
@@ -409,7 +328,7 @@ export function PersonsTable() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => fetchPersons(currentPage + 1, viewMode)}
+                  onClick={() => fetchPersons(currentPage + 1)}
                   disabled={currentPage === data.pagination.pages}
                 >
                   {t('database.pagination.next')}

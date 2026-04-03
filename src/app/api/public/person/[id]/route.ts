@@ -97,31 +97,6 @@ export async function GET(
       );
     }
 
-    // Apply mock photos if no photo exists (same logic as list API)
-    // Need to calculate this person's position in the global ordered list to get consistent photo
-    if (!person.photoUrlThumb) {
-      // Count how many persons come before this one in the sort order:
-      // updatedAt DESC, id ASC
-      const countBefore = await prisma.person.count({
-        where: {
-          isDeleted: false,
-          OR: [
-            // updatedAt is newer (comes first in DESC order)
-            { updatedAt: { gt: person.updatedAt } },
-            // Same updatedAt but smaller id (comes first in ASC id order)
-            {
-              updatedAt: person.updatedAt,
-              id: { lt: person.id }
-            }
-          ]
-        }
-      });
-      
-      // Generate same mock photos array as list API
-      const mockPhotos = Array.from({ length: 50 }, (_, i) => `/people/person${i + 1}.webp`);
-      person.photoUrlThumb = mockPhotos[countBefore % mockPhotos.length];
-    }
-
     // If full history is requested, return complete person data including versions
     // (This is used for admin/staff views)
     if (includeHistory) {

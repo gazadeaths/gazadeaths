@@ -118,6 +118,18 @@ async function main() {
     `;
     console.log('  Recalculated Person.currentVersion');
 
+    // 3f: Restore updatedAt from latest PersonVersion (updateMany above overwrites it)
+    await tx.$executeRaw`
+      UPDATE "Person" p
+      SET "updatedAt" = COALESCE(
+        (SELECT MAX(pv."createdAt")
+         FROM "PersonVersion" pv
+         WHERE pv."personId" = p.id),
+        p."createdAt"
+      )
+    `;
+    console.log('  Restored Person.updatedAt from version history');
+
     return {
       submissions: deletedSubmissions.count,
       versions: deletedVersions.count,

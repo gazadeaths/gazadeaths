@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
-import { Download } from 'lucide-react';
+import { Download, ArrowUp, ArrowDown } from 'lucide-react';
 import { useTranslation, useFormatDate, useFormatNumber } from '@/lib/i18n-context';
 import { PersonSearch } from '@/components/PersonSearch';
 
@@ -38,6 +38,9 @@ interface PersonsData {
   };
 }
 
+type SortField = 'updatedAt' | 'name' | 'dateOfBirth';
+type SortOrder = 'asc' | 'desc';
+
 export function PersonsTable() {
   const { t, locale } = useTranslation();
   const { formatDate } = useFormatDate();
@@ -47,16 +50,21 @@ export function PersonsTable() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageInput, setPageInput] = useState('1');
+  const [sortBy, setSortBy] = useState<SortField>('updatedAt');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const [downloading, setDownloading] = useState(false);
 
-  const fetchPersons = useCallback(async (page: number = 1) => {
+  const fetchPersons = useCallback(async (page: number = 1, sort: SortField = sortBy, order: SortOrder = sortOrder) => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
         page: page.toString(),
         limit: '20',
+        sortBy: sort,
+        sortOrder: order,
       });
-      
+
       const response = await fetch(`/api/public/persons?${params.toString()}`);
       const result = await response.json();
 
@@ -66,33 +74,59 @@ export function PersonsTable() {
 
       setData(result.data);
       setCurrentPage(page);
+      setPageInput(page.toString());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
       setInitialLoad(false);
     }
-  }, []);
+  }, [sortBy, sortOrder]);
 
   useEffect(() => {
-    fetchPersons(1);
-  }, [fetchPersons]);
+    fetchPersons(1, sortBy, sortOrder);
+  }, [fetchPersons, sortBy, sortOrder]);
 
+  const handleSort = (field: SortField) => {
+    if (sortBy === field) {
+      setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortBy(field);
+      setSortOrder('desc');
+    }
+  };
+
+  const handlePageInputSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const page = parseInt(pageInput);
+    if (data && page >= 1 && page <= data.pagination.pages) {
+      fetchPersons(page);
+    } else {
+      setPageInput(currentPage.toString());
+    }
+  };
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortBy !== field) return null;
+    return sortOrder === 'asc'
+      ? <ArrowUp className="inline h-3 w-3 ml-1" />
+      : <ArrowDown className="inline h-3 w-3 ml-1" />;
+  };
+
+  const sortableHeadClass = "cursor-pointer hover:text-foreground select-none";
 
   const handleDownloadCSV = async () => {
     try {
       setDownloading(true);
-      
+
       const response = await fetch(`/api/public/persons/export`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to download CSV');
       }
-      
-      // Get the CSV blob
+
       const blob = await response.blob();
-      
-      // Create download link
+
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -146,30 +180,14 @@ export function PersonsTable() {
         <div className="text-sm text-muted-foreground whitespace-nowrap">
           <span className="font-medium text-foreground">{formatNumber(data.pagination.total)}</span> {t('database.pagination.records')}
         </div>
-        
+
         {/* Centered Search - Desktop only */}
         <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2">
           <PersonSearch variant="header" />
         </div>
-        
+
         <div className="ml-auto" />
       </div>
-
-      {/* Age Filter Slider - Commented out for now */}
-      {/* <div className="flex items-center gap-3 px-4 sm:px-6 lg:px-8 py-4 border-b">
-        <label className="text-sm font-medium text-foreground whitespace-nowrap">
-          Max Age: {sliderValue}
-        </label>
-        <Slider
-          value={[sliderValue]}
-          onValueChange={(value) => setSliderValue(value[0])} // Update visual during drag
-          onValueCommit={(value) => setMaxAge(value[0])} // Apply filter when released
-          min={0}
-          max={100}
-          step={1}
-          className="flex-1 max-w-md"
-        />
-      </div> */}
 
       {/* Mobile Search */}
       <div className="md:hidden px-4 sm:px-6 lg:px-8 py-4 border-b">
@@ -182,15 +200,30 @@ export function PersonsTable() {
             <TableHeader>
               <TableRow>
                 <TableHead>{t('database.columns.externalId')}</TableHead>
-                <TableHead>{t('database.columns.name')}</TableHead>
+                <TableHead
+                  className={sortableHeadClass}
+                  onClick={() => handleSort('name')}
+                >
+                  {t('database.columns.name')}<SortIcon field="name" />
+                </TableHead>
                 <TableHead>{t('database.columns.gender')}</TableHead>
-                <TableHead>{t('database.columns.dateOfBirth')}</TableHead>
+                <TableHead
+                  className={sortableHeadClass}
+                  onClick={() => handleSort('dateOfBirth')}
+                >
+                  {t('database.columns.dateOfBirth')}<SortIcon field="dateOfBirth" />
+                </TableHead>
                 <TableHead>{t('database.columns.dateOfDeath')}</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>{t('database.columns.photo')}</TableHead>
                 <TableHead>Version</TableHead>
                 <TableHead>{t('database.columns.deleted')}</TableHead>
-                <TableHead>Last Updated</TableHead>
+                <TableHead
+                  className={sortableHeadClass}
+                  onClick={() => handleSort('updatedAt')}
+                >
+                  Last Updated<SortIcon field="updatedAt" />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -297,12 +330,23 @@ export function PersonsTable() {
         <div className="flex items-center justify-between mt-6">
           <div className="flex items-center gap-4">
             {data.pagination.pages > 1 && (
-              <div className="text-sm text-muted-foreground force-ltr">
-                {t('database.pagination.page')} {data.pagination.page} {t('database.pagination.of')} {data.pagination.pages}
+              <div className="flex items-center gap-2 text-sm text-muted-foreground force-ltr">
+                <span>{t('database.pagination.page')}</span>
+                <form onSubmit={handlePageInputSubmit} className="inline">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={pageInput}
+                    onChange={(e) => setPageInput(e.target.value)}
+                    onBlur={handlePageInputSubmit}
+                    className="w-12 text-center bg-transparent border rounded px-1 py-0.5 text-foreground text-sm"
+                  />
+                </form>
+                <span>{t('database.pagination.of')} {formatNumber(data.pagination.pages)}</span>
               </div>
             )}
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
@@ -314,14 +358,14 @@ export function PersonsTable() {
               <Download className="h-4 w-4" />
               {downloading ? t('common.loading') : 'Download CSV'}
             </Button>
-            
+
             {data.pagination.pages > 1 && (
               <>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => fetchPersons(currentPage - 1)}
-                  disabled={currentPage === 1}
+                  disabled={currentPage === 1 || loading}
                 >
                   {t('database.pagination.previous')}
                 </Button>
@@ -329,7 +373,7 @@ export function PersonsTable() {
                   variant="outline"
                   size="sm"
                   onClick={() => fetchPersons(currentPage + 1)}
-                  disabled={currentPage === data.pagination.pages}
+                  disabled={currentPage === data.pagination.pages || loading}
                 >
                   {t('database.pagination.next')}
                 </Button>
